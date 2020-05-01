@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Clap App</string>
+    <string name="tap_here">Tap here!</string>
 </resources>
