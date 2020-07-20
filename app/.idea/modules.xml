@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-2011025380/Clap_App.iml" filepath="$PROJECT_DIR$/.idea/modules/-2011025380/Clap_App.iml" group="Clap_App" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app.iml" group="Clap App/app" />
+    </modules>
+  </component>
+</project>
