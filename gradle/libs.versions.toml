@@ -7,7 +7,7 @@ junit = "4.13.2"
 junitVersion = "1.1.5"
 kotlinStdlibJdk7 = "1.9.0"
 kotlinxCoroutinesAndroid = "1.7.1"
-kotlinxCoroutinesCore = "1.4.1"
+kotlinxCoroutinesCore = "1.7.1"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
