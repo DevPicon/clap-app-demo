@@ -3,21 +3,24 @@ package pe.devpicon.android.clapapp
 import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import pe.devpicon.android.clapapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var clapSound: MediaPlayer
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         if (!this::clapSound.isInitialized) {
             clapSound = MediaPlayer.create(this, R.raw.claps);
         }
 
-        btn_launch.setOnClickListener {
+        binding.btnLaunch.setOnClickListener {
             clapSound.start()
         }
     }
