@@ -1,6 +1,7 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -14,11 +15,26 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 4
-        versionName "1.0.1"
+        versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     namespace 'pe.devpicon.android.clapapp'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        tasks.withType(KotlinCompile).configureEach {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+
+    buildFeatures {
+        viewBinding = true
+    }
 
 }
 
