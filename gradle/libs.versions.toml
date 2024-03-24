@@ -1,25 +1,27 @@
 [versions]
 appcompat = "1.6.1"
+composeBom = "2024.03.00"
 constraintlayout = "2.1.4"
 coreKtx = "1.12.0"
 espressoCore = "3.5.1"
-gradle = "8.3.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
-kotlinGradlePlugin = "1.9.23"
-kotlinStdlibJdk7 = "1.9.23"
 kotlinxCoroutinesAndroid = "1.7.1"
 kotlinxCoroutinesCore = "1.7.1"
+foundationAndroid = "1.6.4"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 jetbrains-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 junit = { module = "junit:junit", version.ref = "junit" }
-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
-kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlibJdk7" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }

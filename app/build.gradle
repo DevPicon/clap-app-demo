@@ -14,7 +14,7 @@ android {
         applicationId "pe.devpicon.android.clapapp"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 4
+        versionCode 5
         versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -27,20 +27,23 @@ android {
     }
 
     kotlinOptions {
-        tasks.withType(KotlinCompile).configureEach {
-            kotlinOptions.jvmTarget = "1.8"
-        }
+        // work-runtime-ktx 2.1.0 and above now requires Java 8
+        jvmTarget = "1.8"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
 
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation libs.kotlin.stdlib.jdk7
     implementation libs.appcompat
     implementation libs.core.ktx
     implementation libs.constraintlayout
@@ -50,4 +53,12 @@ dependencies {
 
     implementation libs.kotlinx.coroutines.core
     implementation libs.jetbrains.kotlinx.coroutines.android
+
+    implementation(platform(libs.compose.bom))
+    implementation(libs.foundation.android)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    androidTestImplementation(platform(libs.compose.bom))
 }
