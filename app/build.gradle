@@ -54,6 +54,7 @@ dependencies {
     implementation libs.kotlinx.coroutines.core
     implementation libs.jetbrains.kotlinx.coroutines.android
 
+    implementation(libs.compose.activity)
     implementation(platform(libs.compose.bom))
     implementation(libs.foundation.android)
     implementation(libs.compose.ui)
