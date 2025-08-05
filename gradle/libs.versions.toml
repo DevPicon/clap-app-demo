@@ -9,6 +9,7 @@ junitVersion = "1.1.5"
 kotlinxCoroutinesAndroid = "1.7.1"
 kotlinxCoroutinesCore = "1.7.1"
 foundationAndroid = "1.6.4"
+uiTooling = "1.6.4"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -25,3 +26,4 @@ compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
