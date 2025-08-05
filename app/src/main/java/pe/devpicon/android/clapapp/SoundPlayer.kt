@@ -39,28 +39,27 @@ class SoundPlayer(private val context: Context) {
     }
 
     fun playClapSound() {
-        if (mediaPlayer == null) {
-            Log.e("SoundPlayer", "MediaPlayer not initialized or failed to initialize. Cannot play sound.")
-            return
-        }
-
-        try {
-            if (mediaPlayer?.isPlaying == true) {
-                mediaPlayer?.stop()
-                // You need to call prepare() or prepareAsync() after stop() before you can play again.
-                // Since MediaPlayer.create prepares the source, we might need to reset and set data source again
-                // or re-create it if we want to play from the beginning.
-                // For simplicity, let's re-create it or simply seek to the beginning if already prepared.
-                // A simpler approach for short sounds: if playing, stop and start again.
-                // However, MediaPlayer.create handles prepare internally.
-                // To play again from the start if it was already playing:
-                mediaPlayer?.seekTo(0)
+        mediaPlayer?.let { player ->
+            try {
+                if (player.isPlaying) {
+                    player.pause() // Pause if already playing
+                }
+                player.seekTo(0) // Go to the beginning
+                player.start()   // Start playback
+            } catch (e: IllegalStateException) {
+                Log.e("SoundPlayer", "Error playing sound: ${e.message}", e)
+                // As a fallback, try to release and re-create the MediaPlayer
+                // This can help if the player gets into an unrecoverable state.
+                try {
+                    mediaPlayer?.release()
+                    // Ensure R.raw.claps is your correct sound resource ID
+                    mediaPlayer = MediaPlayer.create(context, R.raw.claps)
+                    mediaPlayer?.start()
+                } catch (e2: Exception) {
+                    Log.e("SoundPlayer", "Error recovering MediaPlayer: ${e2.message}", e2)
+                }
             }
-            mediaPlayer?.start()
-        } catch (e: IllegalStateException) {
-            Log.e("SoundPlayer", "Error playing sound: ${e.message}", e)
-            // It might be good to try and recover or re-initialize mediaPlayer here
-        }
+        } ?: Log.e("SoundPlayer", "MediaPlayer is null, cannot play sound.")
     }
 
     fun release() {
