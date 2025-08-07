@@ -21,11 +21,14 @@ jobs:
       - name: Run Detekt
         run: ./gradlew detekt
 
-      - name: Report Detekt issues on PR
-        uses: tonyanziano/action-detekt-report@main
+      - name: Run Detekt
+        run: ./gradlew detekt
+
+      - name: Upload Detekt Report
+        uses: actions/upload-artifact@v3
         with:
-          report-path: app/build/reports/detekt/detekt.xml
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: detekt-report
+          path: app/build/reports/detekt/detekt.html
 
       - name: Run Unit Tests
         run: ./gradlew test
