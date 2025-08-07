@@ -21,8 +21,23 @@ jobs:
       - name: Run Detekt
         run: ./gradlew detekt
 
-      - name: Run Detekt
-        run: ./gradlew detekt
+      - name: Merge Detekt Reports
+        run: |
+          mkdir -p merged-report
+          echo "# 🔍 Detekt Report Summary" > merged-report/detekt.md
+          echo "" >> merged-report/detekt.md
+          
+          for file in $(find . -path "*/build/reports/detekt/detekt.md"); do
+            echo "## 📄 ${file}" >> merged-report/detekt.md
+            cat "$file" >> merged-report/detekt.md
+            echo -e "\n\n" >> merged-report/detekt.md
+          done
+
+      - name: Publish Detekt Report
+        uses: IlyaSuponev/detekt-pr-reporter-action@v1.0.5
+        with:
+          report_path: merged-report/detekt.md
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Unit Tests
         run: ./gradlew test

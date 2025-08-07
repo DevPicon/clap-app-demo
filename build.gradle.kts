@@ -12,3 +12,12 @@ detekt {
     allRules = false
     autoCorrect = true
 }
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        md.required.set(true)
+        html.required.set(false)
+        xml.required.set(false)
+        sarif.required.set(false)
+    }
+}
