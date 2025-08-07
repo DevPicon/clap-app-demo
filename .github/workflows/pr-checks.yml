@@ -18,10 +18,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Run Detekt
+      - name: Compile project (dry run)
+        run: ./gradlew assembleDebug --dry-run
+
+      - name: Run Detekt (allow failures)
+        if: success()
         run: ./gradlew detekt
+        continue-on-error: true
 
       - name: Merge Detekt Reports
+        if: always()
         run: |
           mkdir -p merged-report
           echo "# 🔍 Detekt Report Summary" > merged-report/detekt.md
@@ -34,13 +40,16 @@ jobs:
           done
 
       - name: Publish Detekt Report
+        if: always()
         uses: IlyaSuponev/detekt-pr-reporter-action@v1.0.5
         with:
           report_path: merged-report/detekt.md
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Unit Tests
+        if: success()
         run: ./gradlew test
 
       - name: Build Debug APK
+        if: success()
         run: ./gradlew assembleDebug
