@@ -24,12 +24,6 @@ jobs:
       - name: Run Detekt
         run: ./gradlew detekt
 
-      - name: Upload Detekt Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: detekt-report
-          path: app/build/reports/detekt/detekt.html
-
       - name: Run Unit Tests
         run: ./gradlew test
 
