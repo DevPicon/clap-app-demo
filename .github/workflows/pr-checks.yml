@@ -22,7 +22,7 @@ jobs:
         run: ./gradlew detekt
 
       - name: Report Detekt issues on PR
-        uses: natiginfo/action-detekt-report@main
+        uses: tonyanziano/action-detekt-report@main
         with:
           report-path: app/build/reports/detekt/detekt.xml
           github-token: ${{ secrets.GITHUB_TOKEN }}
