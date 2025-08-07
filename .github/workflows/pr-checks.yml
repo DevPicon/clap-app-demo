@@ -10,4 +10,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running PR checks"
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run Detekt
+        run: ./gradlew detekt
+
+      - name: Report Detekt issues on PR
+        uses: natiginfo/action-detekt-report@v1
+        with:
+          report-path: app/build/reports/detekt/detekt.xml
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Unit Tests
+        run: ./gradlew test
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
