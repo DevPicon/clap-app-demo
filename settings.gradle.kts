@@ -15,5 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name='Clap App'
-include ':app'
+rootProject.name="Clap App"
+include(":app")
