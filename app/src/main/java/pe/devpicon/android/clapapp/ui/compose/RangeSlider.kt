@@ -36,6 +36,8 @@ import kotlin.math.min
 
 private const val ORANGE = 0xFFFFA500
 
+private const val MINIMUM_DISTANCE = 27f
+
 @Suppress("MagicNumber", "LongParameterList")
 @Composable
 fun RangeSlider(
@@ -44,7 +46,7 @@ fun RangeSlider(
     rangeEnd: Float,
     rangeColor: Color = Color(ORANGE),
     onRangeChange: (Float, Float) -> Unit,
-    minimumDistanceBetweenHandles: Float = 27f
+    minimumDistanceBetweenHandles: Float = MINIMUM_DISTANCE
 ) {
     var start by remember { mutableFloatStateOf(rangeStart) }
     var end by remember { mutableFloatStateOf(rangeEnd) }
