@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 
+@Suppress("TooGenericExceptionCaught")
 class SoundPlayer(private val context: Context) {
 
     private var mediaPlayer: MediaPlayer? = null
@@ -45,7 +46,7 @@ class SoundPlayer(private val context: Context) {
                     player.pause() // Pause if already playing
                 }
                 player.seekTo(0) // Go to the beginning
-                player.start()   // Start playback
+                player.start() // Start playback
             } catch (e: IllegalStateException) {
                 Log.e("SoundPlayer", "Error playing sound: ${e.message}", e)
                 // As a fallback, try to release and re-create the MediaPlayer

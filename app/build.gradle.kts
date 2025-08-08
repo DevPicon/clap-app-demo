@@ -4,6 +4,7 @@ import java.io.FileInputStream // Add this line
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
