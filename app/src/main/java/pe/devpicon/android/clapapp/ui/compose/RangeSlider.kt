@@ -34,13 +34,15 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+private const val ORANGE = 0xFFFFA500
+
 @Suppress("MagicNumber", "LongParameterList")
 @Composable
 fun RangeSlider(
     modifier: Modifier = Modifier,
     rangeStart: Float,
     rangeEnd: Float,
-    rangeColor: Color = Color(0xFFFFA500),
+    rangeColor: Color = Color(ORANGE),
     onRangeChange: (Float, Float) -> Unit,
     minimumDistanceBetweenHandles: Float = 27f
 ) {
@@ -110,7 +112,7 @@ private fun rememberTextPaint(textSizeSp: TextUnit, density: Density): Paint {
     return remember {
         Paint().apply {
             isAntiAlias = true
-            color = Color(0xFFFFA500).toArgb()
+            color = Color(ORANGE).toArgb()
             textSize = with(density) { textSizeSp.toPx() }
         }
     }
