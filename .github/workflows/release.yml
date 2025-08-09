@@ -62,11 +62,6 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Signed app bundle
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-
       - name: Setup Authorization with Google Play Store
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
 
