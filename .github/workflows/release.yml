@@ -75,7 +75,7 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: pe.devpicon.android.clapapp
-          releaseFiles: app/build/outputs/apk/release/app-release-unsigned.apk
+          releaseFiles: ${{steps.sign_app.outputs.signedReleaseFile}}
           track: production
           status: 'draft'
           whatsNewDirectory: whatsNew/
