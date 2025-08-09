@@ -52,6 +52,7 @@ jobs:
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
+        id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
@@ -61,6 +62,11 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Signed app bundle
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+
       - name: Setup Authorization with Google Play Store
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
 
@@ -69,7 +75,7 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: pe.devpicon.android.clapapp
-          releaseFiles: app/build/outputs/apk/release/app-release-unsigned.apk
+          releaseFiles: ${{steps.sign_app.outputs.signedReleaseFile}}
           track: production
           status: 'draft'
           whatsNewDirectory: whatsNew/
