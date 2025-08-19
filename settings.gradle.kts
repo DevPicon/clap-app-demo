@@ -3,17 +3,16 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-
     }
 }
-
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        // Add other repositories needed for your project dependencies
     }
 }
 
-rootProject.name="Clap App"
+rootProject.name = "clap-app-demo"
 include(":app")
+include(":shared")

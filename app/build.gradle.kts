@@ -55,6 +55,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":shared"))
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(libs.appcompat)
     implementation(libs.core.ktx)
