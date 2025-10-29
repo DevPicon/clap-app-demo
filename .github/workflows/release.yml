@@ -20,6 +20,14 @@ jobs:
       - name: Grant execute permissions for gradlew
         run: chmod +x ./gradlew
 
+      # KMP: Validate shared module before running platform-specific tests
+      - name: Validate Shared KMP Module
+        run: ./gradlew :shared:check
+
+      # KMP: Test all targets to ensure cross-platform compatibility
+      - name: Run All Platform Tests
+        run: ./gradlew :shared:allTests
+
       - name: Run Unit Tests
         run: ./gradlew clean testDebug
 
@@ -44,14 +52,15 @@ jobs:
           gradlePath: app/build.gradle.kts
           versionCode: ${{ github.run_number }}
 
+      # Build production flavor for release (not dev)
       - name: Assemble Release APK
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleProdRelease
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: app/build/outputs/apk/prod/release
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           alias: ${{ secrets.ANDROID_DEVS_ALIAS }}

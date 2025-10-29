@@ -101,6 +101,55 @@ clap-app-demo/
 - **Shared**: `shared/build.gradle.kts` - KMP module with static framework
 - **Dependencies**: `gradle/libs.versions.toml` - Centralized version catalog
 
+### CI/CD Configuration
+
+#### GitHub Actions Workflows
+
+**1. PR Checks** (`.github/workflows/pr-checks.yml`)
+- **Trigger**: Pull requests to `master` branch
+- **Purpose**: Automated code quality and validation
+- **Steps**:
+  - Validates shared KMP module for all targets (Android + iOS)
+  - Runs all platform tests including iOS compilation
+  - Executes Detekt static analysis with PR reporting
+  - Runs unit tests
+  - Builds debug APK
+- **Key Features**:
+  - Early detection of KMP compilation issues
+  - Ensures iOS targets remain compilable
+  - Comprehensive Detekt report merging and PR comments
+  - Gradle caching for faster builds
+
+**2. Release Workflow** (`.github/workflows/release.yml`)
+- **Trigger**: Manual (workflow_dispatch)
+- **Purpose**: Automated deployment to Google Play Store
+- **Jobs**:
+  1. **Test Job**:
+     - Validates shared KMP module
+     - Runs all platform tests
+     - Executes Android unit tests
+  2. **Distribute Job**:
+     - Auto-bumps version code
+     - Builds **prod** flavor release APK (`assembleProdRelease`)
+     - Signs APK with release keystore
+     - Deploys to Google Play (production track, draft status)
+- **Important**: Uses production flavor, not dev flavor
+- **Requirements**: GitHub secrets for signing and Play Store API
+
+#### Gradle Verification Tasks
+- `./gradlew :shared:check` - Validates shared module (all targets + Detekt)
+- `./gradlew :shared:allTests` - Runs tests for all targets (Android, iosX64, iosArm64, iosSimulatorArm64)
+- `./gradlew :app:testDebug` - Android-specific unit tests
+- `./gradlew :app:assembleProdRelease` - Build production release APK
+- `./gradlew detekt` - Static code analysis across all modules
+
+#### CI/CD Best Practices
+1. **Validate shared before platform**: Always check shared module before Android/iOS builds
+2. **Test all targets**: Even without iOS deployment, compile and test iOS targets
+3. **Fail fast**: Run quick validations before expensive operations
+4. **Gradle caching**: Enabled in workflows for faster builds
+5. **Product flavors**: Release workflow explicitly uses `prod` flavor
+
 ### Testing Status
 - Android dev flavor: Tested on Samsung Galaxy Z Flip 5 (physical device)
 - iOS: Tested on iPhone 16 Pro Simulator
@@ -192,10 +241,23 @@ class ClapViewModel(private val soundPlayer: SoundPlayer) : ViewModel() {
 - Kotlin: 2.1.21
 - AGP: 8.1.4
 
-### Session Notes (2025-10-29)
+### Session Notes
+
+#### 2025-10-29 - KMP Migration
 - Completed full KMP migration with Koin DI integration
 - Both Android and iOS platforms tested successfully
 - Unified ClapViewModel in commonMain
 - Platform-specific audio implementations working
 - Product flavors configured for Android parallel installation
 - All documentation updated to reflect current architecture
+
+#### 2025-10-29 - CI/CD Integration
+- Updated GitHub Actions workflows for KMP architecture
+- Added shared module validation to PR checks and release workflows
+- Configured workflows to test all targets (Android + iOS compilation)
+- Fixed release workflow to use production flavor (`assembleProdRelease`)
+- Updated action versions from v3 to v4
+- Added Gradle caching for improved build performance
+- Created `docs/backlog.md` for project task tracking
+- Created `LEARNINGS.gemini.md` for session knowledge capture
+- Documented CI/CD configuration in Claude.md
