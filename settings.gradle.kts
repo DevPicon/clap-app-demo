@@ -3,17 +3,18 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-
     }
 }
-
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        // Add other repositories needed for your project dependencies
+        // Add this line for Kotlin Multiplatform native dependencies
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlin/dev")
     }
 }
 
-rootProject.name="Clap App"
+rootProject.name = "clap-app-demo"
 include(":app")
+include(":shared")
