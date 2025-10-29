@@ -10,6 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Add this line for Kotlin Multiplatform native dependencies
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlin/dev")
     }
 }
 

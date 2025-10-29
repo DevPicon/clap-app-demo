@@ -4,10 +4,11 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Project Overview
 
-This is a **Kotlin Multiplatform (KMP)** demo application that plays a clap sound when the screen is touched. The project demonstrates cross-platform code sharing between Android and iOS using the expect/actual pattern, with ~80% of business logic shared across platforms.
+This is a **Kotlin Multiplatform (KMP)** demo application that plays a clap sound when the screen is touched. The project demonstrates cross-platform code sharing between Android and iOS using Koin dependency injection and the expect/actual pattern, with ~80% of business logic shared across platforms.
 
 **Key Technologies:**
 - Kotlin Multiplatform 1.9.23
+- Koin dependency injection framework (cross-platform)
 - Jetpack Compose (Android UI)
 - SwiftUI (iOS UI)
 - Coroutines for async operations
@@ -19,28 +20,50 @@ This is a **Kotlin Multiplatform (KMP)** demo application that plays a clap soun
 ```
 ├── app/           # Android application module
 ├── shared/        # Kotlin Multiplatform shared code
-│   ├── commonMain/    # Platform-agnostic business logic
-│   ├── androidMain/   # Android-specific implementations
-│   └── iosMain/       # iOS-specific implementations
+│   ├── commonMain/    # Platform-agnostic business logic + DI setup
+│   ├── androidMain/   # Android-specific implementations + Koin module
+│   └── iosMain/       # iOS-specific implementations + Koin module
 └── iosApp/        # iOS application (Xcode project)
 ```
+
+### Dependency Injection with Koin
+
+The project uses **Koin** for cross-platform dependency injection. This approach replaces traditional expect/actual classes with:
+- **Function-based DI**: `expect fun getPlatformModule(): Module` in commonMain
+- **Platform modules**: AndroidModule and IosModule implement the expected function
+- **Service locator pattern**: ViewModels and services are retrieved via Koin's container
+
+**Why Koin?**
+- Single dependency resolution for both platforms
+- Reduced expect/actual boilerplate for complex dependencies
+- Better control over platform-specific initialization (Android Context, iOS frameworks)
+- Cleaner ViewModel/service instantiation in UI layers
+
+**DI Module Structure:**
+- `shared/src/commonMain/KoinSetup.kt`: Defines `expect fun getPlatformModule()`
+- `shared/src/androidMain/AndroidModule.kt`: Provides Android-specific implementations
+- `shared/src/iosMain/IosModule.kt`: Provides iOS-specific implementations
 
 ### Key Components
 
 **Shared Business Logic (`shared/src/commonMain/`):**
-- `SoundPlayer.kt`: Interface defining audio playback contract
-- `ClapViewModel.kt`: Shared ViewModel using expect/actual pattern
+- `SoundPlayer.kt`: Interface defining audio playback contract with `expect fun buildPlatformSoundPlayer()`
+- `ClapViewModel.kt`: Shared ViewModel (no expect/actual needed - injected via Koin)
+- `KoinSetup.kt`: Defines `expect fun getPlatformModule()` for DI resolution
 - State management with `StateFlow` for reactive UI updates
 
 **Platform Implementations:**
-- `PlatformSoundPlayer.kt`: expect/actual implementations for audio playback
-- Android: Uses MediaPlayer with resource-based audio files
-- iOS: Uses AVAudioPlayer with bundle-based audio files
+- `shared/src/androidMain/PlatformSoundPlayer.kt`: Android implementation using MediaPlayer
+- `shared/src/androidMain/AndroidModule.kt`: Koin module providing Android dependencies (ResourceReader, AndroidSoundPlayer, ClapViewModel)
+- `shared/src/androidMain/ResourceReader.kt`: Utility for loading raw audio resources via Android Context
+- `shared/src/iosMain/PlatformSoundPlayer.kt`: iOS implementation (stub - AVAudioPlayer pending)
+- `shared/src/iosMain/IosModule.kt`: Koin module providing iOS dependencies (NativeSoundPlayer, ClapViewModel)
+- `shared/src/iosMain/KoinHelper.kt`: Helper class for iOS to initialize and access Koin
 
 **MVVM Pattern:**
-- `ClapViewModel` manages clap count and audio playback state
-- Platform-specific ViewModels handle initialization differences
-- StateFlow provides reactive state updates to UI layers
+- `ClapViewModel` receives SoundPlayer via constructor injection (Koin-managed)
+- Manages clap count and audio playback state via `StateFlow`
+- StateFlow provides reactive state updates to UI layers (Android Compose and iOS SwiftUI)
 
 ## Common Development Commands
 
@@ -92,32 +115,134 @@ This is a **Kotlin Multiplatform (KMP)** demo application that plays a clap soun
 ## Development Patterns
 
 ### Adding Shared Functionality
-1. Define interface/expect class in `shared/src/commonMain/`
-2. Implement actual class in `shared/src/androidMain/` and `shared/src/iosMain/`
-3. Update both Android and iOS UI layers to use the shared logic
+1. Define interface in `shared/src/commonMain/` (e.g., `SoundPlayer.kt`)
+2. Create implementations in `shared/src/androidMain/` and `shared/src/iosMain/`
+3. Register implementations in `AndroidModule.kt` and `IosModule.kt`
+4. UI layers retrieve dependencies via Koin (no manual wiring needed)
 
-### expect/actual Pattern Example
+### Koin-Based Dependency Injection Pattern
+
+**Example: SoundPlayer and ClapViewModel**
+
 ```kotlin
-// commonMain: Define contract
-expect class PlatformSoundPlayer : SoundPlayer
-
-// androidMain: Android implementation
-actual class PlatformSoundPlayer : SoundPlayer {
-    // Android-specific MediaPlayer code
+// commonMain: Define interface and expect function
+// SoundPlayer.kt
+interface SoundPlayer {
+    fun playClapSound()
+    fun release()
+    val isPlaying: StateFlow<Boolean>
 }
 
-// iosMain: iOS implementation  
-actual class PlatformSoundPlayer : SoundPlayer {
-    // iOS-specific AVAudioPlayer code
+expect fun buildPlatformSoundPlayer(): SoundPlayer
+
+// KoinSetup.kt
+expect fun getPlatformModule(): Module
+
+// ClapViewModel.kt - receives dependencies via constructor (Koin will inject)
+class ClapViewModel(private val soundPlayer: SoundPlayer) {
+    fun onClapClick() {
+        soundPlayer.playClapSound()
+    }
+}
+
+// androidMain: Provide Android implementations via Koin
+// AndroidModule.kt
+val androidModule = module {
+    single { ResourceReader(androidContext()) }
+    single<SoundPlayer> { AndroidSoundPlayer(get()) }
+    single { ClapViewModel(get()) }  // get() resolves SoundPlayer from container
+}
+
+actual fun getPlatformModule() = androidModule
+
+// iosMain: Provide iOS implementations via Koin
+// IosModule.kt
+val iosModule = module {
+    single<SoundPlayer> { NativeSoundPlayer() }
+    single { ClapViewModel(get()) }  // get() resolves SoundPlayer from container
+}
+
+actual fun getPlatformModule() = iosModule
+
+// Get instances from Koin using KoinComponent
+actual fun buildPlatformSoundPlayer(): SoundPlayer = object : KoinComponent {}.get()
+```
+
+**Android UI Integration:**
+```kotlin
+// MainActivity.kt - ClapApplication initializes Koin, MainActivity retrieves ViewModel
+val viewModel: ClapViewModel = koinViewModel()  // Jetpack integration via Koin
+```
+
+**iOS UI Integration:**
+```swift
+// ContentView.swift
+init() {
+    self.viewModel = KoinHelper().getClapViewModel()  // Uses Koin to get instance
 }
 ```
 
 ### StateFlow Usage
 - All shared state uses `StateFlow` for cross-platform reactivity
 - ViewModels expose read-only StateFlow properties
-- UI layers collect/observe StateFlow in platform-specific ways
+- Android: Use `.collectAsState()` in Compose to observe changes
+- iOS: Manual observation or KMP interop to collect StateFlow
+
+## Koin Initialization Requirements
+
+**CRITICAL:** Koin must be initialized in both platforms before the app can run.
+
+### Android Initialization
+The `ClapApplication` class must be declared in `AndroidManifest.xml`:
+
+```kotlin
+// app/src/main/java/pe/devpicon/android/clapapp/ClapApplication.kt
+class ClapApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        startKoin {
+            androidContext(this@ClapApplication)
+            modules(getPlatformModule())  // Loads AndroidModule from shared
+        }
+    }
+}
+```
+
+**AndroidManifest.xml must reference it:**
+```xml
+<application android:name=".ClapApplication" ... >
+```
+
+### iOS Initialization
+Call `KoinHelper.doInitKoin()` before accessing any ViewModels:
+
+```swift
+// iosApp/iosApp/App.swift (or AppDelegate)
+import shared
+
+@main
+struct MyApp: App {
+    init() {
+        KoinHelper.companion.doInitKoin()  // Initialize Koin with IosModule
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
 
 ## Important Files & Locations
+
+### Dependency Injection Files
+- `shared/src/commonMain/kotlin/.../KoinSetup.kt`: Defines `expect fun getPlatformModule()`
+- `shared/src/androidMain/kotlin/.../AndroidModule.kt`: Android Koin module with ResourceReader, AndroidSoundPlayer, ClapViewModel
+- `shared/src/androidMain/kotlin/.../ResourceReader.kt`: Utility for accessing Android raw resources
+- `shared/src/iosMain/kotlin/.../IosModule.kt`: iOS Koin module with NativeSoundPlayer, ClapViewModel
+- `shared/src/iosMain/kotlin/.../KoinHelper.kt`: Exposes Koin initialization and instance retrieval for Swift code
+- `app/src/main/java/.../ClapApplication.kt`: Android Application class that initializes Koin
 
 ### Build Configuration
 - `build.gradle.kts` (root): KMP plugins and Detekt configuration
@@ -130,8 +255,8 @@ actual class PlatformSoundPlayer : SoundPlayer {
 - **iOS**: Add audio files to iOS app bundle via Xcode
 
 ### Platform-Specific Entry Points
-- **Android**: `app/src/main/java/.../MainActivity.kt`
-- **iOS**: `iosApp/iosApp/ContentView.swift`
+- **Android**: `app/src/main/java/.../MainActivity.kt` (retrieves ViewModel from Koin)
+- **iOS**: `iosApp/iosApp/ContentView.swift` (retrieves ViewModel via KoinHelper)
 
 ## Development Setup Requirements
 
@@ -176,3 +301,21 @@ actual class PlatformSoundPlayer : SoundPlayer {
 - Log platform-specific errors in actual implementations
 - Provide fallback behavior for audio playback failures
 - Use try-catch blocks around platform-specific audio operations
+
+## Known Limitations
+
+### iOS Audio Implementation
+- Current iOS audio is a **stub implementation** (NativeSoundPlayer) that simulates playback without actual sound
+- **TODO:** Configure AVFoundation framework linkage in `shared/build.gradle.kts`
+- **TODO:** Implement full AVAudioPlayer integration with proper bundle resource loading
+- **Workaround:** The stub correctly manages UI state (isPlaying StateFlow) so UI updates work correctly even without audio
+
+### Platform Requirements
+- Requires **Xcode command line tools** for iOS development and builds
+- iOS deployment target must be compatible with KMP and Koin versions
+- Android requires API level 21+ (specified in build.gradle.kts)
+
+### Koin-Specific Constraints
+- Must initialize Koin before accessing any DI-dependent components
+- Forgetting to call `ClapApplication` in Android or `KoinHelper.doInitKoin()` in iOS will cause runtime crashes
+- All expect functions must be paired with exactly one actual implementation per platform

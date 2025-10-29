@@ -1,4 +1,6 @@
 [versions]
+kotlin = "2.1.21"
+koin = "4.0.0"
 appcompat = "1.6.1"
 composeBom = "2024.03.00"
 constraintlayout = "2.1.4"
@@ -6,13 +8,13 @@ coreKtx = "1.12.0"
 espressoCore = "3.5.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
-kotlinxCoroutinesAndroid = "1.7.1"
-kotlinxCoroutinesCore = "1.7.1"
+kotlinxCoroutinesAndroid = "1.9.0"
+kotlinxCoroutinesCore = "1.9.0"
 foundationAndroid = "1.6.4"
 uiTooling = "1.6.4"
 activityCompose = "1.8.2"
 composeMultiplatform = "1.6.4"
-kotlinxCoroutinesIos = "1.7.1"
+kotlinxCoroutinesIos = "1.9.0"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -33,3 +35,5 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 compose-multiplatform = { group = "org.jetbrains.compose", name = "compose", version.ref = "composeMultiplatform" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }

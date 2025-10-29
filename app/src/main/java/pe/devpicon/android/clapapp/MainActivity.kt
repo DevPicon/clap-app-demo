@@ -3,25 +3,19 @@ package pe.devpicon.android.clapapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import pe.devpicon.android.clapapp.ui.compose.MainScreen
 import pe.devpicon.clapapp.shared.ClapViewModel
 
 class MainActivity : ComponentActivity() {
-    private lateinit var viewModel: ClapViewModel
+    private val viewModel: ClapViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        viewModel = ClapViewModel()
-        viewModel.initialize(this)
 
         setContent {
             MainScreen(
-                onLaunchClick = {
-                    viewModel.onClapClick()
-                }
+                onLaunchClick = { viewModel.onClapClick() }
             )
         }
     }

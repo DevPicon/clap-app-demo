@@ -19,10 +19,11 @@ android {
 }
 
 kotlin {
+
     androidTarget {
         compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
+            compilerOptions.configure {
+                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
             }
         }
     }
@@ -34,6 +35,7 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            isStatic = true
         }
     }
     
@@ -41,12 +43,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.koin.core)
             }
         }
         
         val androidMain by getting {
             dependencies {
                 implementation(libs.jetbrains.kotlinx.coroutines.android)
+                implementation(libs.koin.android)
             }
         }
         

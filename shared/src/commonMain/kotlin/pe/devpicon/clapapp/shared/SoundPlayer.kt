@@ -8,4 +8,4 @@ interface SoundPlayer {
     val isPlaying: StateFlow<Boolean>
 }
 
-expect class PlatformSoundPlayer() : SoundPlayer
+expect fun buildPlatformSoundPlayer(): SoundPlayer

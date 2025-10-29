@@ -1,33 +1,27 @@
 package pe.devpicon.clapapp.shared
 
-import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-actual class PlatformSoundPlayer : SoundPlayer {
+actual fun buildPlatformSoundPlayer(): SoundPlayer = object : KoinComponent {}.get()
+
+class AndroidSoundPlayer(private val resourceReader: ResourceReader) : SoundPlayer {
     private var mediaPlayer: MediaPlayer? = null
     private val _isPlaying = MutableStateFlow(false)
-    
+
     override val isPlaying: StateFlow<Boolean> = _isPlaying
 
     init {
         try {
-            // Note: This will need to be initialized with a context
-            // We'll handle this through a factory method or dependency injection
-        } catch (e: Exception) {
-            Log.e("PlatformSoundPlayer", "Error creating MediaPlayer: ${e.message}", e)
-            mediaPlayer = null
-        }
-    }
-
-    fun initialize(context: Context) {
-        try {
-            mediaPlayer = MediaPlayer.create(context, getClapSoundResourceId(context))
+            val resourceId = resourceReader.getRawResourceId("claps")
+            mediaPlayer = MediaPlayer.create(resourceReader.context, resourceId)
             
             if (mediaPlayer == null) {
-                Log.e("PlatformSoundPlayer", "MediaPlayer.create returned null. Check your sound resource.")
+                Log.e("PlatformSoundPlayer", "MediaPlayer factory returned null. Check your resource.")
             }
 
             mediaPlayer?.setOnErrorListener { _, what, extra ->
@@ -35,7 +29,7 @@ actual class PlatformSoundPlayer : SoundPlayer {
                 _isPlaying.value = false
                 true
             }
-            
+
             mediaPlayer?.setOnCompletionListener {
                 _isPlaying.value = false
             }
@@ -56,16 +50,19 @@ actual class PlatformSoundPlayer : SoundPlayer {
                 _isPlaying.value = true
             } catch (e: IllegalStateException) {
                 Log.e("PlatformSoundPlayer", "Error playing sound: ${e.message}", e)
-                try {
-                    mediaPlayer?.release()
-                    // Re-create the MediaPlayer - this would need context
-                    // For now, we'll just log the error
-                    _isPlaying.value = false
-                } catch (e2: Exception) {
-                    Log.e("PlatformSoundPlayer", "Error recovering MediaPlayer: ${e2.message}", e2)
-                }
+                mediaPlayer?.release()
+                val resourceId = resourceReader.getRawResourceId("claps")
+                mediaPlayer = MediaPlayer.create(resourceReader.context, resourceId)
+                mediaPlayer?.start()
+                _isPlaying.value = mediaPlayer != null
             }
-        } ?: Log.e("PlatformSoundPlayer", "MediaPlayer is null, cannot play sound.")
+        } ?: run {
+            Log.e("PlatformSoundPlayer", "MediaPlayer is null, attempting to (re)create via factory.")
+            val resourceId = resourceReader.getRawResourceId("claps")
+            mediaPlayer = MediaPlayer.create(resourceReader.context, resourceId)
+            mediaPlayer?.start()
+            _isPlaying.value = mediaPlayer != null
+        }
     }
 
     override fun release() {
@@ -73,9 +70,5 @@ actual class PlatformSoundPlayer : SoundPlayer {
         mediaPlayer = null
         _isPlaying.value = false
         Log.d("PlatformSoundPlayer", "MediaPlayer released")
-    }
-    
-    private fun getClapSoundResourceId(context: Context): Int {
-        return context.resources.getIdentifier("claps", "raw", context.packageName)
     }
 }

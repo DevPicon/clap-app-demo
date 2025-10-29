@@ -4,10 +4,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-expect class ClapViewModel() {
-    val clapCount: StateFlow<Int>
-    val isPlaying: StateFlow<Boolean>
-    fun onClapClick()
-    fun initialize()
-    fun release()
+class ClapViewModel(private val soundPlayer: SoundPlayer) {
+    private val _clapCount = MutableStateFlow(0)
+    val clapCount: StateFlow<Int> = _clapCount.asStateFlow()
+    
+    val isPlaying: StateFlow<Boolean> = soundPlayer.isPlaying
+    
+    fun onClapClick() {
+        soundPlayer.playClapSound()
+        _clapCount.value += 1
+    }
+    
+    fun initialize() {
+        // Platform-specific initialization is handled by SoundPlayer implementations
+    }
+    
+    fun release() {
+        soundPlayer.release()
+    }
 }
