@@ -3,6 +3,7 @@ package pe.devpicon.android.clapapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import pe.devpicon.android.clapapp.ui.compose.MainScreen // Import the new Composable
 
 // Removed unused imports like android.widget.ImageButton if they were solely for the XML.
@@ -14,6 +15,7 @@ class MainActivity : ComponentActivity() { // Changed from AppCompatActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         soundPlayer = SoundPlayer(this) // Uses R.raw.claps
 
         setContent {

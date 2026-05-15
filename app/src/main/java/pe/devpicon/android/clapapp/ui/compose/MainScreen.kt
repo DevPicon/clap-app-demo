@@ -3,9 +3,13 @@ package pe.devpicon.android.clapapp.ui.compose
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,32 +25,38 @@ import pe.devpicon.android.clapapp.R // Import for your project's resources
 
 @Composable
 fun MainScreen(onLaunchClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White),
-        contentAlignment = Alignment.Center
-    ) {
-        IconButton(
-            onClick = onLaunchClick,
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.safeDrawing
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
+                .padding(innerPadding)
                 .fillMaxSize()
-                .aspectRatio(1f)
+                .background(Color.White),
+            contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_circle_double),
-                contentDescription = stringResource(id = R.string.tap_here),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(
-                    colorResource(id = R.color.button_main)
+            IconButton(
+                onClick = onLaunchClick,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(1f)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_circle_double),
+                    contentDescription = stringResource(id = R.string.tap_here),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit,
+                    colorFilter = ColorFilter.tint(
+                        colorResource(id = R.color.button_main)
+                    )
                 )
+            }
+            Text(
+                text = stringResource(id = R.string.tap_here),
+                color = Color.Black
             )
         }
-        Text(
-            text = stringResource(id = R.string.tap_here),
-            color = Color.Black
-        )
     }
 }
 
