@@ -58,6 +58,7 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(libs.appcompat)
     implementation(libs.core.ktx)
+    implementation(libs.core.splashscreen)
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background, default is white. -->
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+        <!-- Use the app icon for the splash screen. -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <!-- Set the theme of the Activity that directly follows the splash screen. -->
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+</resources>
