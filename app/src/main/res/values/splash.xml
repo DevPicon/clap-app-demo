@@ -4,7 +4,7 @@
         <!-- Set the splash screen background, default is white. -->
         <item name="windowSplashScreenBackground">@android:color/white</item>
         <!-- Use the app icon for the splash screen. -->
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_icon_new</item>
         <!-- Set the theme of the Activity that directly follows the splash screen. -->
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>

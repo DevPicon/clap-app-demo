@@ -21,18 +21,16 @@ class MainActivity : ComponentActivity() { // Changed from AppCompatActivity
         soundPlayer = SoundPlayer(this) // Uses R.raw.claps
 
         setContent {
-            // If you have a global Compose theme (e.g., in ui.theme.Theme.kt), wrap MainScreen with it.
-            // For example:
-            // ClapAppDemoTheme { // Replace with your actual theme name from your project
-            //    MainScreen(onLaunchClick = {
-            //        soundPlayer.playClapSound()
-            //    })
-            // }
+            val versionName = packageManager.getPackageInfo(packageName, 0).versionName
+            val versionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+            val versionInfo = "${versionName}v-$versionCode"
 
-            // Calling MainScreen directly if no specific app theme is set up for this example
-            MainScreen(onLaunchClick = {
-                soundPlayer.playClapSound()
-            })
+            MainScreen(
+                onLaunchClick = {
+                    soundPlayer.playClapSound()
+                },
+                versionInfo = versionInfo
+            )
         }
     }
 
