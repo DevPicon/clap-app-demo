@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import pe.devpicon.android.clapapp.ui.compose.MainScreen
+import pe.devpicon.android.clapapp.ui.theme.ClapAppTheme
 
 // Removed unused imports like android.widget.ImageButton if they were solely for the XML.
 // Ensure androidx.compose.material3.Text is imported if not automatically,
@@ -27,16 +28,18 @@ class MainActivity : ComponentActivity() { // Changed from AppCompatActivity
         soundPlayer = SoundPlayer(this) // Uses R.raw.claps
 
         setContent {
-            val versionName = packageManager.getPackageInfo(packageName, 0).versionName
-            val versionCode = packageManager.getPackageInfo(packageName, 0).versionCode
-            val versionInfo = "${versionName}v-$versionCode"
+            ClapAppTheme {
+                val versionName = packageManager.getPackageInfo(packageName, 0).versionName
+                val versionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+                val versionInfo = "${versionName}v-$versionCode"
 
-            MainScreen(
-                onLaunchClick = {
-                    soundPlayer.playClapSound()
-                },
-                versionInfo = versionInfo
-            )
+                MainScreen(
+                    onLaunchClick = {
+                        soundPlayer.playClapSound()
+                    },
+                    versionInfo = versionInfo
+                )
+            }
         }
     }
 
