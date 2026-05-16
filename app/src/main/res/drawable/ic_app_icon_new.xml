@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    
+    <!-- Outer Circle -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M50,10 A40,40 0 1,1 50,90 A40,40 0 1,1 50,10 Z" />
+
+    <!-- Left Hand -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,45 Q30,40 25,45 T25,55 T35,65 L45,65 L45,45 Z" />
+        
+    <!-- Right Hand -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M65,45 Q70,40 75,45 T75,55 T65,65 L55,65 L55,45 Z" />
+
+    <!-- "Clap" Motion Lines -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M50,35 L50,25 M40,38 L35,30 M60,38 L65,30" />
+
+</vector>
