@@ -43,24 +43,23 @@ class SoundPlayer(private val context: Context) {
         mediaPlayer?.let { player ->
             try {
                 if (player.isPlaying) {
-                    player.pause() // Pause if already playing
+                    player.pause()
+                    player.seekTo(0)
+                } else {
+                    player.start()
                 }
-                player.seekTo(0) // Go to the beginning
-                player.start() // Start playback
             } catch (e: IllegalStateException) {
-                Log.e("SoundPlayer", "Error playing sound: ${e.message}", e)
-                // As a fallback, try to release and re-create the MediaPlayer
-                // This can help if the player gets into an unrecoverable state.
+                Log.e("SoundPlayer", "Error toggling sound: ${e.message}", e)
+                // Fallback recovery
                 try {
                     mediaPlayer?.release()
-                    // Ensure R.raw.claps is your correct sound resource ID
                     mediaPlayer = MediaPlayer.create(context, R.raw.claps)
                     mediaPlayer?.start()
                 } catch (e2: Exception) {
                     Log.e("SoundPlayer", "Error recovering MediaPlayer: ${e2.message}", e2)
                 }
             }
-        } ?: Log.e("SoundPlayer", "MediaPlayer is null, cannot play sound.")
+        } ?: Log.e("SoundPlayer", "MediaPlayer is null, cannot toggle sound.")
     }
 
     fun release() {
